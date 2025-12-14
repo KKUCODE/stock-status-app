@@ -30,10 +30,26 @@ def to_excel_bytes(df):
         df.to_excel(writer, index=False)
     return out.getvalue()
 
+st.markdown(
+    """
+    <style>
+        body { direction: rtl; text-align: right; }
+        .block-container { direction: rtl; }
+        label, h1, h2, h3, p { text-align: right; }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 st.title("تحديث حالة المنتجات حسب المخزون")
 
-my_file = st.file_uploader("ارفع ملف المنتجات", type=["xlsx", "csv"])
-tpl_file = st.file_uploader("ارفع ملف القالب", type=["xlsx", "csv"])
+col1, col2 = st.columns(2)
+
+with col1:
+    tpl_file = st.file_uploader("ملف الرفع", type=["xlsx", "csv"])
+
+with col2:
+    my_file = st.file_uploader("ملف المنتجات", type=["xlsx", "csv"])
 
 if my_file and tpl_file:
     my = pd.read_excel(my_file) if my_file.name.endswith("xlsx") else pd.read_csv(my_file)
@@ -51,13 +67,15 @@ if my_file and tpl_file:
 
     mask = matched_stock.notna()
     tpl.loc[mask, STATUS_COL_TPL] = np.where(
-        matched_stock[mask] < THRESHOLD, "inactive", "active"
+        matched_stock[mask] < THRESHOLD,
+        "inactive",
+        "active"
     )
 
-    st.success(f"تم تحديث {int(mask.sum())} منتج")
+    st.success(f"تم تحديث حالة {int(mask.sum())} منتج")
 
     st.download_button(
-        "تحميل الملف النهائي",
+        "تحميل الملف بعد تحديث الحالة",
         data=to_excel_bytes(tpl),
         file_name="foods_bulk_format_updated.xlsx"
     )
