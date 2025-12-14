@@ -41,15 +41,15 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.title("تحديث حالة المنتجات حسب المخزون")
+st.title("تحديث حالة المخزون")
 
 col1, col2 = st.columns(2)
 
 with col1:
-    tpl_file = st.file_uploader("ملف الرفع", type=["xlsx", "csv"])
+    tpl_file = st.file_uploader("ملف المنتجات من الموقع", type=["xlsx", "csv"])
 
 with col2:
-    my_file = st.file_uploader("ملف المنتجات", type=["xlsx", "csv"])
+    my_file = st.file_uploader("ملف المنتجات من البقالة", type=["xlsx", "csv"])
 
 if my_file and tpl_file:
     my = pd.read_excel(my_file) if my_file.name.endswith("xlsx") else pd.read_csv(my_file)
@@ -72,10 +72,10 @@ if my_file and tpl_file:
         "active"
     )
 
-    st.success(f"تم تحديث حالة {int(mask.sum())} منتج")
+    st.success(f"تم تحديث المخزون {int(mask.sum())} منتج")
 
     st.download_button(
-        "تحميل الملف بعد تحديث الحالة",
+        "تحميل الملف بعد تحديث المخزون",
         data=to_excel_bytes(tpl),
         file_name="foods_bulk_format_updated.xlsx"
     )
